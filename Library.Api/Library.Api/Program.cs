@@ -6,6 +6,7 @@ using Library.Api.Data;
 using Library.Api.Models;
 using Library.Api.Services;
 using Microsoft.AspNetCore.Authorization;
+using FastEndpoints.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,52 +17,27 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AnyOrigin", policy => policy.AllowAnyOrigin());
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 builder.Services.AddSingleton<IDbConnectionFactory>(_ => new SqliteConnectionFactory(builder.Configuration.GetValue<string>("Database:ConnectionString")));
 builder.Services.AddSingleton<DatabaseInitializer>();
 builder.Services.AddSingleton<IBookService, BookService>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddAuthentication(ApiKeySchemeConstants.SchemeName)
-                .AddScheme<ApiKeyAuthSchemeOptions, ApiKeyAuthHandler>(ApiKeySchemeConstants.SchemeName, _ => { });
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication(ApiKeySchemeConstants.SchemeName)
+//                .AddScheme<ApiKeyAuthSchemeOptions, ApiKeyAuthHandler>(ApiKeySchemeConstants.SchemeName, _ => { });
+//builder.Services.AddAuthorization();
 builder.Services.AddFastEndpoints();
+builder.Services.AddSwaggerDoc();
 var app = builder.Build();
 app.UseCors();
-app.UseSwagger();
-app.UseSwaggerUI();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 app.UseFastEndpoints();
+app.UseOpenApi();
+app.UseSwaggerUi3(s => s.ConfigureDefaults());
 
 var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
 await databaseInitializer.InitializeAsync();
 
-app.MapPost("books",
-    [Authorize(AuthenticationSchemes = ApiKeySchemeConstants.SchemeName)]
-    async (Book book, IBookService bookService, IValidator<Book> validator) =>
-{
-    var validationResult = await validator.ValidateAsync(book);
-    if (!validationResult.IsValid)
-    {
-        return Results.BadRequest(validationResult.Errors);
-    }
-
-    var created = await bookService.CreateAsync(book);
-    if (!created)
-    {
-        return Results.BadRequest(new List<ValidationFailure>
-        {
-            new("isbn","A book with this Isbn Already exist" )
-        });
-    }
-
-    //return Results.Created($"/books/{book.Isbn}", book);
-    return Results.CreatedAtRoute("GetBook", new { isbn = book.Isbn }, book);
-}).WithName("CreateBook")
-  .Accepts<Book>("application/json")
-  .Produces<Book>(201)
-  .Produces<IEnumerable<ValidationFailure>>(400)
-  .WithTags("Books");
 
 app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
 {
