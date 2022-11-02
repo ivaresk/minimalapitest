@@ -5,7 +5,7 @@ using Library.Api.Models;
 
 public interface IBookService
 {
-    public Task<bool> CreateAsync(BookRequest book);
+    public Task<bool> CreateAsync(Book book);
     public Task<Book?> GetByIsbnAsync(string isbn);
     public Task<IEnumerable<Book>> GetAllAsync();
     public Task<IEnumerable<Book>> SearchByTitleAsync(string searchTerm);

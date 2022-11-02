@@ -1,4 +1,4 @@
-using FastEndpoints;
+global using FastEndpoints;
 using FluentValidation;
 using FluentValidation.Results;
 using Library.Api.Auth;
@@ -38,20 +38,6 @@ app.UseSwaggerUi3(s => s.ConfigureDefaults());
 var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
 await databaseInitializer.InitializeAsync();
 
-
-app.MapGet("books", async (IBookService bookService, string? searchTerm) =>
-{
-    if (!string.IsNullOrEmpty(searchTerm))
-    {
-        var matchedBooks = await bookService.SearchByTitleAsync(searchTerm);
-        return Results.Ok(matchedBooks);
-    }
-
-    var books = await bookService.GetAllAsync();
-    return Results.Ok(books);
-}).WithName("GetBooks")
-  .Produces<IEnumerable<Book>>(200)
-  .WithTags("Books");
 
 app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
 {

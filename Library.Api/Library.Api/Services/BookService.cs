@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Library.Api.Data;
-using Library.Api.Endpoints.V1.Books.Models;
 using Library.Api.Models;
-using Library.Api.Models.Mapper;
 
 namespace Library.Api.Services;
 
@@ -15,10 +13,8 @@ public class BookService : IBookService
         this.connectionFactory = connectionFactory;
     }
 
-    public async Task<bool> CreateAsync(BookRequest bookRequest)
+    public async Task<bool> CreateAsync(Book book)
     {
-        Book book = bookRequest.ToModel();
-
         var existinBook = await GetByIsbnAsync(book.Isbn);
         if (existinBook is not null)
         {
