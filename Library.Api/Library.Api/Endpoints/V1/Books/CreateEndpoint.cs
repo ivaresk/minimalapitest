@@ -1,4 +1,4 @@
-﻿namespace Library.Api.Endpoints.V1.Books.CreateBook;
+﻿namespace Library.Api.Endpoints.V1.Books;
 
 using FastEndpoints;
 using FluentValidation.Results;
@@ -8,7 +8,7 @@ using Library.Api.Services;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class Endpoint : Endpoint<BookRequest, BookResponse, BookMapper>
+public class Endpoint : Endpoint<BookRequest, BookResponse>
 {
     public override void Configure()
     {
@@ -31,7 +31,7 @@ public class Endpoint : Endpoint<BookRequest, BookResponse, BookMapper>
 
     public override async Task HandleAsync(BookRequest req, CancellationToken ct)
     {
-        var created = await bookService.CreateAsync(Map.ToEntity(req));
+        var created = await bookService.CreateAsync(req.ToEntity());
         if (!created)
         {
             AddError(f => f.Isbn, "A book with this Isbn Already exist");

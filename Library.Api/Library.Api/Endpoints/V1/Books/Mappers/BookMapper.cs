@@ -3,9 +3,9 @@ using Library.Api.Models;
 
 namespace Library.Api.Endpoints.V1.Books.Mappers;
 
-public class BookMapper : Mapper<BookRequest, BookResponse, Book>
-{
-    public override BookResponse FromEntity(Book book)
+public static class BookMapper
+{ 
+    public static BookResponse FromEntity(this Book book)
     {
         return new BookResponse
         {
@@ -18,7 +18,7 @@ public class BookMapper : Mapper<BookRequest, BookResponse, Book>
         };
     }
 
-    public override Book ToEntity(BookRequest bookRequest)
+    public static Book ToEntity(this BookRequest bookRequest)
     {
         return new Book
         {

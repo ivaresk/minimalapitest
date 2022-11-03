@@ -5,7 +5,6 @@ using Library.Api.Auth;
 using Library.Api.Data;
 using Library.Api.Models;
 using Library.Api.Services;
-using Microsoft.AspNetCore.Authorization;
 using FastEndpoints.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);

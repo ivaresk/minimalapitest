@@ -3,8 +3,8 @@ using Library.Api.Endpoints.V1.Books.Models;
 using Library.Api.Models;
 using Library.Api.Services;
 
-namespace Library.Api.Endpoints.V1.Books.GetBooks;
-public class GetBooksEndpoint : EndpointWithoutRequest<BooksResponse, BookResponseMapper>
+namespace Library.Api.Endpoints.V1.Books;
+public class GetBooksEndpoint : EndpointWithoutRequest<List<BookResponse>>
 {
     public override void Configure()
     {
@@ -26,24 +26,17 @@ public class GetBooksEndpoint : EndpointWithoutRequest<BooksResponse, BookRespon
     public override async Task HandleAsync(CancellationToken ct)
     {
         var searchTerm = Query<string>("searchTerm", isRequired: false);
-        BooksResponse booksResponse;
         if (!string.IsNullOrEmpty(searchTerm))
         {
             var matchedBooks = await bookService.SearchByTitleAsync(searchTerm);
-            booksResponse = new BooksResponse
-            {
-                Books = matchedBooks.Select(Map.FromEntity)
-            };
-            await SendAsync(booksResponse);
+
+            var books = matchedBooks.Select(b => b.FromEntity()).ToList();
+            await SendAsync(books);
             return;
         }
 
-        var books = await bookService.GetAllAsync();
+        var allBooks = await bookService.GetAllAsync();
 
-        booksResponse = new BooksResponse
-        {
-            Books = books.Select(Map.FromEntity)
-        };
-        await SendAsync(booksResponse);
+        await SendAsync(allBooks.Select(b => b.FromEntity()).ToList());
     }
 }
