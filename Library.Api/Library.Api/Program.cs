@@ -37,16 +37,6 @@ app.UseSwaggerUi3(s => s.ConfigureDefaults());
 var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
 await databaseInitializer.InitializeAsync();
 
-
-app.MapGet("books/{isbn}", async (string isbn, IBookService bookService) =>
-{
-    var book = await bookService.GetByIsbnAsync(isbn);
-    return book is not null ? Results.Ok(book) : Results.NotFound();
-}).WithName("GetBook")
-  .Produces<Book>(200)
-  .Produces(204)
-  .WithTags("Books");
-
 app.MapPut("books/{isbn}", async (string isbn, Book book, IBookService bookService, IValidator<Book> validator) =>
 {
     var validationResult = await validator.ValidateAsync(book);

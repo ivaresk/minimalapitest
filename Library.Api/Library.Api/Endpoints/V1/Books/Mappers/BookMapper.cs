@@ -5,7 +5,7 @@ namespace Library.Api.Endpoints.V1.Books.Mappers;
 
 public static class BookMapper
 { 
-    public static BookResponse FromEntity(this Book book)
+    public static BookResponse ToResponse(this Book book)
     {
         return new BookResponse
         {

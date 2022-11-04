@@ -30,13 +30,13 @@ public class GetBooksEndpoint : EndpointWithoutRequest<List<BookResponse>>
         {
             var matchedBooks = await bookService.SearchByTitleAsync(searchTerm);
 
-            var books = matchedBooks.Select(b => b.FromEntity()).ToList();
+            var books = matchedBooks.Select(b => b.ToResponse()).ToList();
             await SendAsync(books);
             return;
         }
 
         var allBooks = await bookService.GetAllAsync();
 
-        await SendAsync(allBooks.Select(b => b.FromEntity()).ToList());
+        await SendAsync(allBooks.Select(b => b.ToResponse()).ToList());
     }
 }
