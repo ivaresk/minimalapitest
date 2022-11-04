@@ -37,30 +37,4 @@ app.UseSwaggerUi3(s => s.ConfigureDefaults());
 var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
 await databaseInitializer.InitializeAsync();
 
-app.MapPut("books/{isbn}", async (string isbn, Book book, IBookService bookService, IValidator<Book> validator) =>
-{
-    var validationResult = await validator.ValidateAsync(book);
-    if (!validationResult.IsValid)
-    {
-        return Results.BadRequest(validationResult.Errors);
-    }
-
-    var updated = await bookService.UpdateAsync(book);
-    return updated ? Results.Ok(book) : Results.NotFound();
-
-}).WithName("UpdateBook")
-  .Accepts<Book>("application/json")
-  .Produces<Book>(200)
-  .Produces<IEnumerable<ValidationFailure>>(400)
-  .WithTags("Books");
-
-app.MapDelete("books/{isbn}", async (string isbn, IBookService bookService) =>
-{
-    var deleted = await bookService.DeleteAsync(isbn);
-    return deleted ? Results.NoContent() : Results.NotFound();
-}).WithName("DeleteBook")
-  .Produces(204)
-  .Produces(404)
-  .WithTags("Books");
-
 app.Run();

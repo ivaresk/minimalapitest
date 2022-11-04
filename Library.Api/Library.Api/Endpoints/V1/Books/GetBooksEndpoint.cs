@@ -1,11 +1,20 @@
-﻿using Library.Api.Endpoints.V1.Books.Mappers;
+﻿namespace Library.Api.Endpoints.V1.Books;
+
+using Library.Api.Endpoints.V1.Books.Mappers;
 using Library.Api.Endpoints.V1.Books.Models;
 using Library.Api.Models;
 using Library.Api.Services;
 
-namespace Library.Api.Endpoints.V1.Books;
 public class GetBooksEndpoint : EndpointWithoutRequest<List<BookResponse>>
 {
+
+    private readonly IBookService bookService;
+
+    public GetBooksEndpoint(IBookService bookService)
+    {
+        this.bookService = bookService;
+    }
+
     public override void Configure()
     {
         Get("v1/books");
@@ -14,13 +23,6 @@ public class GetBooksEndpoint : EndpointWithoutRequest<List<BookResponse>>
                   .WithName("GetBooks")
                   .Produces<IEnumerable<Book>>(200)
                   .WithTags("Books"));
-    }
-
-    private readonly IBookService bookService;
-
-    public GetBooksEndpoint(IBookService bookService)
-    {
-        this.bookService = bookService;
     }
 
     public override async Task HandleAsync(CancellationToken ct)

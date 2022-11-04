@@ -7,11 +7,11 @@ using Library.Api.Services;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class GetByIsbnEndpoint : EndpointWithoutRequest<BookResponse>
+public class GetBookByIsbnEndpoint : EndpointWithoutRequest<BookResponse>
 {
     private readonly IBookService bookService;
 
-    public GetByIsbnEndpoint(IBookService bookService)
+    public GetBookByIsbnEndpoint(IBookService bookService)
     {
         this.bookService = bookService;
     }
@@ -26,8 +26,6 @@ public class GetByIsbnEndpoint : EndpointWithoutRequest<BookResponse>
                   .Produces(204)
                   .WithTags("Books"));
     }
-
-
 
     public override async Task HandleAsync(CancellationToken ct)
     {

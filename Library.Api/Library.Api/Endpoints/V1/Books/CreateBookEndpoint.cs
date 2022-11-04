@@ -10,6 +10,14 @@ using System.Threading.Tasks;
 
 public class Endpoint : Endpoint<BookRequest, BookResponse>
 {
+
+    private readonly IBookService bookService;
+
+    public Endpoint(IBookService bookService)
+    {
+        this.bookService = bookService;
+    }
+
     public override void Configure()
     {
         Post("v1/books");
@@ -20,13 +28,6 @@ public class Endpoint : Endpoint<BookRequest, BookResponse>
           .Produces<BookResponse>(201)
           .Produces<IEnumerable<ValidationFailure>>(400)
           .WithTags("Books"));
-    }
-
-    private readonly IBookService bookService;
-
-    public Endpoint(IBookService bookService)
-    {
-        this.bookService = bookService;
     }
 
     public override async Task HandleAsync(BookRequest req, CancellationToken ct)
